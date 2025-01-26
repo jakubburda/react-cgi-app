@@ -2,7 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 // Import reducers to manage different parts of the application state
-import jokeReducer from './slices/jokeSlices';
+import jokeReducer from './slices/jokeSlice';
 import categoryReducer from './slices/categorySlice';
 import jokeSearchReducer from './slices/jokeSearchSlice';
 

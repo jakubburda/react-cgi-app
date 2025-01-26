@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 // Import reducers to manage different parts of the application state
 import jokeReducer from './slices/jokeSlices';
+import categoryReducer from './slices/categorySlice';
 
 /**
  * Configures the Redux store with the specified reducer logic.
@@ -12,6 +13,7 @@ import jokeReducer from './slices/jokeSlices';
 const store = configureStore({
     reducer: {
         joke: jokeReducer,
+        category: categoryReducer,
       },
 });
 

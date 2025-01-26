@@ -1,12 +1,35 @@
 // React hooks and external libraries 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button, CircularProgress, Typography, Box } from '@mui/material';
+import styled from '@emotion/styled';
 
 // Redux slices
 import { setLoading, setJoke, setError } from '../redux/slices/jokeSlice';
 
 // Utility functions for API calls
 import { fetchJokeByRandom } from '../utils/apiUtils';
+
+/**
+ * Styled components (using Emotion)
+ */
+const JokeCardWrapper = styled(Box)`
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+`;
+
+const JokeText = styled(Typography)`
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+`;
 
 /**
  * JokeCard Component
@@ -26,8 +49,9 @@ const JokeCard = () => {
     const isLoading = useSelector((state) => state.joke.isLoading);
     const error = useSelector((state) => state.joke.error);
 
+
     /**
-     * This `useEffect` hook is responsible for fetching a random joke from the API
+     * Asynchronously fetches a random joke from the API
      * when the component is first rendered and updating the Redux state with the 
      * fetched joke, loading state, and error state.
      * 
@@ -37,35 +61,64 @@ const JokeCard = () => {
      * - If an error occurs, it dispatches `setError` with an error message.
      * - It ensures the loading state is turned off after the joke has been fetched or an error has occurred.
      * 
-     * This effect runs only once when the component is first mounted (due to the empty 
-     * dependency array with `dispatch`).
+     * @function fetchJoke
+     * @@returns {Promise<void>} Returns a promise that resolves when the joke has been fetched and Redux state is updated.
+     */
+    const fetchJoke = useCallback(async () => {
+        try {
+            dispatch(setLoading(true));
+            const fetchedJoke = await fetchJokeByRandom();
+            dispatch(setJoke(fetchedJoke));
+        } catch (error) {
+            dispatch(setError('Error fetching joke'));
+        } finally {
+            dispatch(setLoading(false));
+        }
+    },[dispatch]);
+
+    /**
+     * The useEffect hook that triggers the fetching of a random joke when the component is mounted
+     * and when the `fetchJoke` function changes.
+     * 
+     * This hook is responsible for calling the `fetchJoke` function on the initial render and 
+     * every time the `fetchJoke` function is updated (which happens when `dispatch` changes).
+     * It ensures that the joke is fetched as soon as the component is mounted, keeping the 
+     * state in sync with the latest version of the `fetchJoke` function.
      * 
      * @returns {void}
      */
     useEffect(() => {
-        const fetchJoke = async () => {
-            try {
-                dispatch(setLoading(true));
-                const fetchedJoke = await fetchJokeByRandom();
-                dispatch(setJoke(fetchedJoke));
-            } catch (error) {
-                dispatch(setError('Error fetching joke'));
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
         fetchJoke();
-    }, [dispatch]);
+    }, [fetchJoke]);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <JokeCardWrapper>
+                <CircularProgress />
+            </JokeCardWrapper>
+        )  
     }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    return <div>Vtip: {joke}</div>;
+    
+      if (error) {
+        return (
+            <JokeCardWrapper>
+                <Typography color="error">Error: {error}</Typography>
+            </JokeCardWrapper>
+        )
+      }
+    
+      return (
+        <JokeCardWrapper>
+            <JokeText variant="h6">{joke}</JokeText>
+            <Button 
+                variant="contained"
+                color="primary"
+                onClick={fetchJoke}
+            >
+                Another joke
+            </Button>
+        </JokeCardWrapper>
+      );
 };
 
 export default JokeCard;

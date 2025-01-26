@@ -22,3 +22,18 @@ export const fetchJokeByCategory = async (category) => {
         throw error;
     }
 };
+
+// Feature to search joke based on text query
+export const fetchJokeBySearch = async (query) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL_SEARCH}${query}`);
+        if (response.data.result && response.data.result.length > 0) {
+            return response.data.result[0].value;
+        } else {
+            return "No joke found with that query.";
+        }
+    } catch (error) {
+        console.error('Error searching for joke:', error);
+        throw error;
+    }
+};

@@ -13,7 +13,6 @@ const StyledTitle = styled(Typography)`
     text-align: center;
     letter-spacing: 1px;
 `;
-
 /**
  * Title Component
  *

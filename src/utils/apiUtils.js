@@ -10,4 +10,15 @@ export const fetchJokeByRandom = async () => {
       console.error('Error fetching joke:', error);
       throw error;
     }
-  };
+};
+
+// Function to get a joke from a category
+export const fetchJokeByCategory = async (category) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL_CATEGORY}${category}`);
+        return response.data.value;
+    } catch (error) {
+        console.error('Error fetching joke by category:', error);
+        throw error;
+    }
+};

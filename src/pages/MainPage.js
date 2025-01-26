@@ -1,11 +1,12 @@
-import React from 'react'
-
-import JokeCard from "../components/JokeCard"
+// Components
+import JokeCard from "../components/JokeCard";
+import Title from "../components/elements/Title";
 
 const MainPage = () => {
   return (
     <>
-        <JokeCard />
+      <Title />
+      <JokeCard />
     </>
   );
 };

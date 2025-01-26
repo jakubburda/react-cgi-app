@@ -41,8 +41,8 @@ export const fetchJokeBySearch = async (query) => {
 // Feature to get joke categories in array
 export const fetchJokeCategories = async () => {
     try {
-        const respose = await axios.get(`${process.env.REACT_APP_AP_URL_CATEGORIES}`);
-        return respose.data.value;
+        const respose = await axios.get(`${process.env.REACT_APP_API_URL_CATEGORIES}`);
+        return respose.data;
     } catch (error) {
         console.error('Error fetching categories:', error);
         throw error;

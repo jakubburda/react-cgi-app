@@ -1,4 +1,4 @@
-// React hooks and external libraries 
+// React hooks and external libraries
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography, Box } from '@mui/material';
@@ -15,6 +15,7 @@ import { CircularProgress } from '@mui/material';
 
 // Components
 import ErrorMessage from '../notifications/ErrorMessage';
+import SearchInput from '../elements/SearchInput';
 
 /**
  * Styled components (using Emotion)
@@ -23,12 +24,12 @@ const JokeCardWrapper = styled(Box)`
   padding: 20px;
   background-color: #f4f4f4;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 80px;
+  height: auto;
+  width: 100%;
 `;
 
 const JokeText = styled(Typography)`
@@ -51,34 +52,42 @@ const JokeText = styled(Typography)`
  */
 const JokeCard = ({ mode = 'random' }) => {
     const dispatch = useDispatch();
-    const {joke, error: jokeError, isLoading: jokeIsLoading} = useSelector((state) => state.joke);
-    const {selectedCategory} = useSelector(state => state.category);
+    const { joke, error: jokeError, isLoading: jokeIsLoading } = useSelector((state) => state.joke);
+    const { selectedCategory, isLoading: isLoadingCategories, error: errorCategories } = useSelector((state) => state.category);
     const { result, isLoading: searchIsLoading, error: searchError } = useSelector((state) => state.jokeSearch);
 
     /**
-     * Asynchronously fetches a joke based on the selected mode (random or category) and updates the Redux state.
+     * Asynchronously fetches a joke based on the selected mode (category, search, or random).
      * 
-     * - If the mode is "category", it fetches a joke based on the selected category using `fetchJokeByCategory`.
-     * - If the mode is "random", it fetches a random joke using `fetchJokeByRandom`.
-     * - Dispatches `setLoading(true)` before the API request and `setLoading(false)` after the request completes.
-     * - On success, the joke is stored in the Redux state using `setJoke`.
-     * - In case of an error, an error message is set using `setError`.
+     * This function handles the fetching process for jokes based on different modes:
+     * - If the mode is 'category' and a category is selected, it fetches a joke from the selected category.
+     * - If the mode is 'search' and there is a search result, it uses the search result as the joke.
+     * - If the mode is 'random' or no category/search result is specified, it fetches a random joke.
      * 
+     * It manages the loading state and dispatches actions to the Redux store for:
+     * - Setting the loading state to `true` while fetching.
+     * - Storing the fetched joke or search result in the Redux state.
+     * - Handling any errors during the fetching process.
+     * - Setting the loading state back to `false` once the fetching process is complete.
+     * 
+     * The function ensures that the correct joke is fetched based on the current mode and that the UI reflects the current loading/error state.
      * @function fetchJoke
-     * @returns {Promise<void>} Returns a promise that resolves when the joke has been fetched and Redux state is updated.
+     * @async
      */
     const fetchJoke = useCallback(async () => {
         try {
             dispatch(setLoading(true));
-            if (result) {
-                dispatch(setJoke(result));
+            let fetchedJoke;
+            
+            if (mode === 'category' && selectedCategory) {
+                fetchedJoke = await fetchJokeByCategory(selectedCategory);
+            } else if (mode === 'search' && result) {
+                fetchedJoke = result;
             } else {
-                const fetchedJoke = mode === 'category'
-                    ? await fetchJokeByCategory(selectedCategory)
-                    : await fetchJokeByRandom();
-                
-                dispatch(setJoke(fetchedJoke));
+                fetchedJoke = await fetchJokeByRandom();
             }
+            
+            dispatch(setJoke(fetchedJoke));
         } catch (error) {
             dispatch(setError('Error fetching joke'));
         } finally {
@@ -87,64 +96,79 @@ const JokeCard = ({ mode = 'random' }) => {
     }, [dispatch, mode, selectedCategory, result]);
 
     /**
-     * The useEffect hook that triggers the fetching of a random joke when the component is mounted
-     * and when the `fetchJoke` function changes.
+     * Effect hook that triggers the `fetchJoke` function when the component mounts
+     * or when the `fetchJoke` function changes.
      * 
-     * This hook is responsible for calling the `fetchJoke` function on the initial render and 
-     * every time the `fetchJoke` function is updated (which happens when `dispatch` changes).
-     * It ensures that the joke is fetched as soon as the component is mounted, keeping the 
-     * state in sync with the latest version of the `fetchJoke` function.
+     * This hook ensures that the joke is fetched as soon as the component is rendered or when the dependencies
+     * (in this case, the `fetchJoke` function) change. By having `fetchJoke` as a dependency, the effect will 
+     * re-run if the `fetchJoke` function reference changes.
      * 
-     * @returns {void}
+     * The hook is responsible for initiating the joke-fetching process automatically when the component
+     * is mounted or when the `fetchJoke` callback is updated.
+     * 
+     * @effect
      */
     useEffect(() => {
         fetchJoke();
     }, [fetchJoke]);
 
-    if (jokeIsLoading || searchIsLoading) {
+    // Display loading animation for the specific mode
+    if ((mode === 'random' && jokeIsLoading) || (mode === 'category' && isLoadingCategories) || (mode === 'search' && searchIsLoading)) {
         return (
             <JokeCardWrapper>
                 <CircularProgress />
             </JokeCardWrapper>
-        )  
+        );
     }
     
-    if (jokeError || searchError) {
+    // Display error for the specific mode
+    if ((mode === 'random' && jokeError) || (mode === 'category' && errorCategories) || (mode === 'search' && searchError)) {
         return (
-            <ErrorMessage message={jokeError || searchError}>
-                <Typography color="error">Error: {jokeError || searchError}</Typography>
+            <ErrorMessage message={jokeError || searchError || errorCategories}>
+                <Typography color="error">
+                    Error: {jokeError || searchError || errorCategories}
+                </Typography>
             </ErrorMessage>
-        )
+        );
     }
 
-    if(result) {
+    // Logic for handling category mode
+    if (mode === 'category' && !selectedCategory) {
         return (
             <JokeCardWrapper>
-                <JokeText variant="h6">
-                    {result}
-                </JokeText>
+                <Typography variant="h6">Please select a category to fetch jokes.</Typography>
             </JokeCardWrapper>
-        )
+        );
     }
-    
+
+    // Display SearchInput for the 'search' mode
+    if (mode === 'search') {
+        return (
+            <JokeCardWrapper>
+                {result && (
+                    <JokeText variant="h6">
+                        {result}  {/* Display the search result once it's available */}
+                    </JokeText>
+                )}
+                <SearchInput />
+            </JokeCardWrapper>
+        );
+    }
+
+    // Default case: Display the joke for random mode or category if category is selected
     return (
         <JokeCardWrapper>
             <JokeText variant="h6">
-                {joke}
+                {mode === 'search' ? result : joke}
             </JokeText>
 
-            {mode !== "search" &&
-                <Button 
-                    variant="contained"
-                    color="primary"
-                    onClick={fetchJoke}
-                >
+            {mode !== 'search' && (
+                <Button variant="contained" color="primary" onClick={fetchJoke}>
                     Another joke
                 </Button>
-            }
+            )}
         </JokeCardWrapper>
     );
 };
 
 export default JokeCard;
-

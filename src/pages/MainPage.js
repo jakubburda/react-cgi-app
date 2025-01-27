@@ -8,16 +8,14 @@ import { setSearchQuery, setSearchResult, setSearchError } from '../redux/slices
 // Components
 import Title from "../components/elements/Title";
 import NavButton from "../components/elements/NavButton";
-import SearchInput from "../components/elements/SearchInput";
 import JokeCard from "../components/modules/JokeCard";
-import JokeCategoryMenu from '../components/menus/JokeCategoryMenu';
 
 // Assets
 import ChuckNorrisImage from '../../src/assets/images/chuck-norris.jpg'
 
 const MainPage = () => {
   const dispatch = useDispatch();
-  const [activeComponent, setActiveComponent] = useState("JokeCard");
+  const [activeComponent, setActiveComponent] = useState("random");
   const { setIsSidebarActive } = useOutletContext();
 
   /**
@@ -58,10 +56,10 @@ const MainPage = () => {
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
 
         <NavButton
-          active={activeComponent === "JokeCard"}
+          active={activeComponent === "random"}
           onClick={() => {
             clearSearchState();
-            setActiveComponent("JokeCard");
+            setActiveComponent("random");
             dispatch(setSelectedCategory(null));
             setIsSidebarActive(false);
           }}
@@ -70,10 +68,10 @@ const MainPage = () => {
         </NavButton>
 
         <NavButton
-          active={activeComponent === "JokeCategoryMenu"}
+          active={activeComponent === "category"}
           onClick={() => {
             clearSearchState();
-            setActiveComponent("JokeCategoryMenu");
+            setActiveComponent("category");
             setIsSidebarActive(true);
           }}
         >
@@ -81,9 +79,9 @@ const MainPage = () => {
         </NavButton>
 
         <NavButton
-          active={activeComponent === "SearchInput"}
+          active={activeComponent === "search"}
           onClick={() => {
-            setActiveComponent("SearchInput");
+            setActiveComponent("search");
             dispatch(setSelectedCategory(null));
             setIsSidebarActive(false);
           }}
@@ -91,13 +89,11 @@ const MainPage = () => {
           Search
         </NavButton>
       </div>
-          {/* Logic for displaying a search component */}
-      {activeComponent === "SearchInput" && <SearchInput />}
 
-      {/* Logic for displaying a component based on its state */}
-      {activeComponent === "JokeCategoryMenu" && <JokeCategoryMenu />}
-      {activeComponent === "JokeCard" && <JokeCard mode="random" />}
-      {activeComponent === "SearchInput" && <JokeCard mode="search" />}
+      {/* Logic for displaying components */}
+      {activeComponent === "category" && <JokeCard mode="category" />}
+      {activeComponent === "random" && <JokeCard mode="random" />}
+      {activeComponent === "search" && <JokeCard mode="search" />}
     </>
   );
 };

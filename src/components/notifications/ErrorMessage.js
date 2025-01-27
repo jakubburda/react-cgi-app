@@ -1,6 +1,5 @@
 // React hooks and external libraries 
 import { Box, Typography } from '@mui/material';
-import { ErrorOutline } from '@mui/icons-material';
 import styled from '@emotion/styled';
 
 // Styled components for ErrorMessage
@@ -39,7 +38,6 @@ const ErrorText = styled(Typography)`
 const ErrorMessage = ({ message }) => {
   return (
     <ErrorWrapper>
-          <ErrorOutline sx={{ marginRight: '5px' }} />
         <ErrorText>{message}</ErrorText>
     </ErrorWrapper>
   );

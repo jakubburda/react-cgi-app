@@ -5,6 +5,7 @@ import { setSelectedCategory } from '../redux/slices/categorySlice';
 
 // Components
 import Title from "../components/elements/Title";
+import NavButton from "../components/elements/NavButton";
 import JokeCard from "../components/modules/JokeCard";
 import JokeCategoryMenu from '../components/menus/JokeCategoryMenu';
 
@@ -17,17 +18,23 @@ const MainPage = () => {
       <Title />
 
       {/* Control logic to change the component */}
-      <div style={{ marginBottom: "20px" }}>
-        <button onClick={() => setActiveComponent("JokeCategoryMenu")}>
-          Kategories
-        </button>
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <NavButton
+          active={activeComponent === "JokeCategoryMenu"}
+          onClick={() => setActiveComponent("JokeCategoryMenu")}
+        >
+          Categories
+        </NavButton>
 
-        <button onClick={() => {
-          setActiveComponent("JokeCard");
-          dispatch(setSelectedCategory(null));
-        }}>
+        <NavButton
+          active={activeComponent === "JokeCard"}
+          onClick={() => {
+            setActiveComponent("JokeCard");
+            dispatch(setSelectedCategory(null));
+          }}
+        >
           Random
-        </button>
+        </NavButton>
       </div>
 
       {/* Logic for displaying a component based on its state */}

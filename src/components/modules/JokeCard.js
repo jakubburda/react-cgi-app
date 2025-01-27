@@ -1,14 +1,17 @@
 // React hooks and external libraries 
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, CircularProgress, Typography, Box } from '@mui/material';
+import { Button, Typography, Box } from '@mui/material';
 import styled from '@emotion/styled';
 
 // Redux slices
-import { setLoading, setJoke, setError } from '../redux/slices/jokeSlice';
+import { setLoading, setJoke, setError } from '../../redux/slices/jokeSlice';
 
 // Utility functions for API calls
-import { fetchJokeByRandom } from '../utils/apiUtils';
+import { fetchJokeByRandom, fetchJokeByCategory } from '../../utils/apiUtils';
+
+// Animations
+import { CircularProgress } from '@mui/material';
 
 /**
  * Styled components (using Emotion)
@@ -43,38 +46,39 @@ const JokeText = styled(Typography)`
  * - Displays an error message if the API call fails.
  * - Displays the fetched joke once the data is successfully retrieved.
  */
-const JokeCard = () => {
+const JokeCard = ({ mode = 'random' }) => {
     const dispatch = useDispatch();
     const joke = useSelector((state) => state.joke.joke);
+    const {selectedCategory} = useSelector(state => state.category);
     const isLoading = useSelector((state) => state.joke.isLoading);
     const error = useSelector((state) => state.joke.error);
 
-
     /**
-     * Asynchronously fetches a random joke from the API
-     * when the component is first rendered and updating the Redux state with the 
-     * fetched joke, loading state, and error state.
+     * Asynchronously fetches a joke based on the selected mode (random or category) and updates the Redux state.
      * 
-     * - It dispatches `setLoading(true)` before the API call to indicate loading.
-     * - It fetches the joke asynchronously using `fetchJokeByRandom()`.
-     * - If successful, it dispatches `setJoke` to store the joke in Redux state.
-     * - If an error occurs, it dispatches `setError` with an error message.
-     * - It ensures the loading state is turned off after the joke has been fetched or an error has occurred.
+     * - If the mode is "category", it fetches a joke based on the selected category using `fetchJokeByCategory`.
+     * - If the mode is "random", it fetches a random joke using `fetchJokeByRandom`.
+     * - Dispatches `setLoading(true)` before the API request and `setLoading(false)` after the request completes.
+     * - On success, the joke is stored in the Redux state using `setJoke`.
+     * - In case of an error, an error message is set using `setError`.
      * 
      * @function fetchJoke
-     * @@returns {Promise<void>} Returns a promise that resolves when the joke has been fetched and Redux state is updated.
+     * @returns {Promise<void>} Returns a promise that resolves when the joke has been fetched and Redux state is updated.
      */
     const fetchJoke = useCallback(async () => {
         try {
             dispatch(setLoading(true));
-            const fetchedJoke = await fetchJokeByRandom();
+            const fetchedJoke = mode === 'category'
+                ? await fetchJokeByCategory(selectedCategory)
+                : await fetchJokeByRandom();
+
             dispatch(setJoke(fetchedJoke));
         } catch (error) {
             dispatch(setError('Error fetching joke'));
         } finally {
             dispatch(setLoading(false));
         }
-    },[dispatch]);
+    }, [dispatch, mode, selectedCategory]);
 
     /**
      * The useEffect hook that triggers the fetching of a random joke when the component is mounted
@@ -99,17 +103,20 @@ const JokeCard = () => {
         )  
     }
     
-      if (error) {
+    if (error) {
         return (
             <JokeCardWrapper>
                 <Typography color="error">Error: {error}</Typography>
             </JokeCardWrapper>
         )
-      }
+    }
     
-      return (
+    return (
         <JokeCardWrapper>
-            <JokeText variant="h6">{joke}</JokeText>
+            <JokeText variant="h6">
+                {joke}
+            </JokeText>
+
             <Button 
                 variant="contained"
                 color="primary"
@@ -118,7 +125,7 @@ const JokeCard = () => {
                 Another joke
             </Button>
         </JokeCardWrapper>
-      );
+    );
 };
 
 export default JokeCard;

@@ -48,10 +48,9 @@ const JokeText = styled(Typography)`
  */
 const JokeCard = ({ mode = 'random' }) => {
     const dispatch = useDispatch();
-    const joke = useSelector((state) => state.joke.joke);
+    const {joke, error: jokeError, isLoading: jokeIsLoading} = useSelector((state) => state.joke);
     const {selectedCategory} = useSelector(state => state.category);
-    const isLoading = useSelector((state) => state.joke.isLoading);
-    const error = useSelector((state) => state.joke.error);
+    const { result, isLoading: searchIsLoading, error: searchError } = useSelector((state) => state.jokeSearch);
 
     /**
      * Asynchronously fetches a joke based on the selected mode (random or category) and updates the Redux state.
@@ -68,17 +67,21 @@ const JokeCard = ({ mode = 'random' }) => {
     const fetchJoke = useCallback(async () => {
         try {
             dispatch(setLoading(true));
-            const fetchedJoke = mode === 'category'
-                ? await fetchJokeByCategory(selectedCategory)
-                : await fetchJokeByRandom();
-
-            dispatch(setJoke(fetchedJoke));
+            if (result) {
+                dispatch(setJoke(result));
+            } else {
+                const fetchedJoke = mode === 'category'
+                    ? await fetchJokeByCategory(selectedCategory)
+                    : await fetchJokeByRandom();
+                
+                dispatch(setJoke(fetchedJoke));
+            }
         } catch (error) {
             dispatch(setError('Error fetching joke'));
         } finally {
             dispatch(setLoading(false));
         }
-    }, [dispatch, mode, selectedCategory]);
+    }, [dispatch, mode, selectedCategory, result]);
 
     /**
      * The useEffect hook that triggers the fetching of a random joke when the component is mounted
@@ -95,7 +98,7 @@ const JokeCard = ({ mode = 'random' }) => {
         fetchJoke();
     }, [fetchJoke]);
 
-    if (isLoading) {
+    if (jokeIsLoading || searchIsLoading) {
         return (
             <JokeCardWrapper>
                 <CircularProgress />
@@ -103,10 +106,20 @@ const JokeCard = ({ mode = 'random' }) => {
         )  
     }
     
-    if (error) {
+    if (jokeError || searchError) {
         return (
             <JokeCardWrapper>
-                <Typography color="error">Error: {error}</Typography>
+                <Typography color="error">Error: {jokeError || searchError}</Typography>
+            </JokeCardWrapper>
+        )
+    }
+
+    if(result) {
+        return (
+            <JokeCardWrapper>
+                <JokeText variant="h6">
+                    {result}
+                </JokeText>
             </JokeCardWrapper>
         )
     }
@@ -117,13 +130,15 @@ const JokeCard = ({ mode = 'random' }) => {
                 {joke}
             </JokeText>
 
-            <Button 
-                variant="contained"
-                color="primary"
-                onClick={fetchJoke}
-            >
-                Another joke
-            </Button>
+            {mode !== "search" &&
+                <Button 
+                    variant="contained"
+                    color="primary"
+                    onClick={fetchJoke}
+                >
+                    Another joke
+                </Button>
+            }
         </JokeCardWrapper>
     );
 };

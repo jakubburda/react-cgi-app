@@ -33,6 +33,6 @@ const jokeSearchSlice = createSlice({
   },
 });
 
-export const { setSearchQuery, setSearchResult, setSearchLoading, setSearchErro } = jokeSearchSlice.actions;
+export const { setSearchQuery, setSearchResult, setSearchLoading, setSearchError } = jokeSearchSlice.actions;
 
 export default jokeSearchSlice.reducer;

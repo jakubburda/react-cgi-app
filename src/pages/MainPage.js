@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useDispatch } from 'react-redux';
 import { setSelectedCategory } from '../redux/slices/categorySlice';
+import { setSearchQuery, setSearchResult, setSearchError } from '../redux/slices/jokeSearchSlice';
 
 // Components
 import Title from "../components/elements/Title";
@@ -14,6 +15,25 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const [activeComponent, setActiveComponent] = useState("JokeCard"); 
 
+  /**
+   * clearSearchState Function
+   *
+   * This function is responsible for clearing the search-related state in the Redux store.
+   * It resets the search query, search results, and any search-related error messages.
+   * 
+   * Dispatches the following Redux actions:
+   * - setSearchQuery: Resets the search query to an empty string.
+   * - setSearchResult: Clears the search results by setting them to an empty string.
+   * - setSearchError: Resets any existing error messages to `null`.
+   * 
+   * @function clearSearchState
+   */
+  const clearSearchState = () => {
+    dispatch(setSearchQuery(""));
+    dispatch(setSearchResult(""));
+    dispatch(setSearchError(null));
+  };
+
   return (
     <>
       <Title />
@@ -24,6 +44,7 @@ const MainPage = () => {
         <NavButton
           active={activeComponent === "JokeCard"}
           onClick={() => {
+            clearSearchState();
             setActiveComponent("JokeCard");
             dispatch(setSelectedCategory(null));
           }}
@@ -33,7 +54,10 @@ const MainPage = () => {
 
         <NavButton
           active={activeComponent === "JokeCategoryMenu"}
-          onClick={() => setActiveComponent("JokeCategoryMenu")}
+          onClick={() => {
+            clearSearchState();
+            setActiveComponent("JokeCategoryMenu")
+          }}
         >
           Categories
         </NavButton>

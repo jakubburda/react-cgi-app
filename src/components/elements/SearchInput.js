@@ -139,9 +139,9 @@ const SearchInput = () => {
                 </SearchButton>
             </SearchWrapper>
 
-            <ErrorMessage message={"Please enter a search string"}>
-                {searchTerm === "" && 'Please enter a search string'}
-            </ErrorMessage>
+            {searchTerm === "" && 
+                <ErrorMessage message={"Please enter a search string"} />
+            }
         </>
     );
 };

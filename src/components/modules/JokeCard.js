@@ -13,6 +13,9 @@ import { fetchJokeByRandom, fetchJokeByCategory } from '../../utils/apiUtils';
 // Animations
 import { CircularProgress } from '@mui/material';
 
+// Components
+import ErrorMessage from '../notifications/ErrorMessage';
+
 /**
  * Styled components (using Emotion)
  */
@@ -108,9 +111,9 @@ const JokeCard = ({ mode = 'random' }) => {
     
     if (jokeError || searchError) {
         return (
-            <JokeCardWrapper>
+            <ErrorMessage message={jokeError || searchError}>
                 <Typography color="error">Error: {jokeError || searchError}</Typography>
-            </JokeCardWrapper>
+            </ErrorMessage>
         )
     }
 

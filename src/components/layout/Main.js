@@ -12,7 +12,6 @@ const MainWrapper = styled.main`
     width: 1200px;
     padding: 20px;
     background-color: #f9f9f9;
-    min-height: 80vh;
     border: 1px solid #c3c3c3;
     border-radius: 5px;
 `;

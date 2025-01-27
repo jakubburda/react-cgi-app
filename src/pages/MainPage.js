@@ -1,6 +1,7 @@
 // React hooks and external libraries 
 import { useState } from "react";
 import { useDispatch } from 'react-redux';
+import { useOutletContext } from 'react-router-dom';
 import { setSelectedCategory } from '../redux/slices/categorySlice';
 import { setSearchQuery, setSearchResult, setSearchError } from '../redux/slices/jokeSearchSlice';
 
@@ -11,9 +12,13 @@ import SearchInput from "../components/elements/SearchInput";
 import JokeCard from "../components/modules/JokeCard";
 import JokeCategoryMenu from '../components/menus/JokeCategoryMenu';
 
+// Assets
+import ChuckNorrisImage from '../../src/assets/images/chuck-norris.jpg'
+
 const MainPage = () => {
   const dispatch = useDispatch();
-  const [activeComponent, setActiveComponent] = useState("JokeCard"); 
+  const [activeComponent, setActiveComponent] = useState("JokeCard");
+  const { setIsSidebarActive } = useOutletContext();
 
   /**
    * clearSearchState Function
@@ -36,6 +41,17 @@ const MainPage = () => {
 
   return (
     <>
+      <img 
+        src={ChuckNorrisImage}
+        alt="Chuck Norris" 
+        style={{ 
+          width: "40%",
+          height: "auto",
+          borderRadius: "8px",
+          marginBottom: "20px" 
+        }}
+      />
+
       <Title />
 
       {/* Control logic to change the component */}
@@ -47,6 +63,7 @@ const MainPage = () => {
             clearSearchState();
             setActiveComponent("JokeCard");
             dispatch(setSelectedCategory(null));
+            setIsSidebarActive(false);
           }}
         >
           Random
@@ -56,7 +73,8 @@ const MainPage = () => {
           active={activeComponent === "JokeCategoryMenu"}
           onClick={() => {
             clearSearchState();
-            setActiveComponent("JokeCategoryMenu")
+            setActiveComponent("JokeCategoryMenu");
+            setIsSidebarActive(true);
           }}
         >
           Categories
@@ -67,6 +85,7 @@ const MainPage = () => {
           onClick={() => {
             setActiveComponent("SearchInput");
             dispatch(setSelectedCategory(null));
+            setIsSidebarActive(false);
           }}
         >
           Search

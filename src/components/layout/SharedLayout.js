@@ -1,10 +1,22 @@
 
 // React hooks and external libraries 
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import styled from '@emotion/styled';
 
 // Layout components
 import AppContainer from './AppContainer';
 import Main from './Main';
+import Sidebar from './Sidebar'
+
+/**
+ * Styled components for categories menu
+ */
+const Wrapper = styled.div`
+  display: flex;
+  height: 80%;
+  overflow: hidden;
+`;
 
 /**
  * SharedLayout Component
@@ -19,11 +31,16 @@ import Main from './Main';
  * @returns {JSX.Element} A layout that wraps the main content, providing structure and consistent styling.
  */
 const SharedLayout = () => {
+  const [isSidebarActive, setIsSidebarActive] = useState(false);
+
   return (
     <AppContainer>
+      <Wrapper >
+        <Sidebar isSidebarActive={isSidebarActive} />
         <Main>
-            <Outlet />
+          <Outlet context={{setIsSidebarActive}}/>
         </Main>
+      </Wrapper>
     </AppContainer>
   );
 };

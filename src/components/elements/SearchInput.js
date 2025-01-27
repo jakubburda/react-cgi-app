@@ -2,9 +2,44 @@
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchResult, setSearchQuery, setSearchError, setSearchLoading } from '../../redux/slices/jokeSearchSlice'; 
+import { TextField, Button, Box, Typography } from '@mui/material';
+import styled from '@emotion/styled';
 
 // Utility function
 import { fetchJokeBySearch } from '../../utils/apiUtils';
+
+// Animations
+import { CircularProgress } from '@mui/material';
+
+
+/**
+ * Styled components for SearchInput
+ */
+const SearchWrapper = styled(Box)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+`;
+
+const SearchButton = styled(Button)`
+    background-color: #1976d2;
+    color: white;
+    &:hover {
+        background-color: #1565c0;
+    }
+`;
+
+const ErrorText = styled(Typography)`
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+`;
 
 /**
  * SearchInput Component
@@ -29,9 +64,11 @@ import { fetchJokeBySearch } from '../../utils/apiUtils';
 const SearchInput = () => {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const fetchSearch = useCallback(async () => {
         dispatch(setSearchLoading(true));
+        setLoading(true);
         try {
             const searchedJoked = await fetchJokeBySearch(searchTerm);
             dispatch(setSearchResult(searchedJoked));
@@ -40,6 +77,7 @@ const SearchInput = () => {
             dispatch(setSearchLoading(false));
         } finally {
             dispatch(setSearchLoading(false));
+            setLoading(false);
         }
     },[dispatch, searchTerm])
 
@@ -83,19 +121,27 @@ const SearchInput = () => {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <input
+        <SearchWrapper>
+            <ErrorText>{searchTerm === "" && 'Please enter a search string'}</ErrorText>
+
+            <TextField
+                label="Search for a Joke"
+                variant="outlined"
                 value={searchTerm}
-                onChange={(e) => handleChange(e)}
-                style={{ width: '200px' }}
+                onChange={handleChange}
+                fullWidth
             />
 
-            <button
+            <SearchButton
                 onClick={handleSearch}
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={loading}
             >
-                Search
-            </button>
-        </div>
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
+            </SearchButton>
+        </SearchWrapper>
     );
 };
 

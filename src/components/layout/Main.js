@@ -9,11 +9,21 @@ const MainWrapper = styled.main`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 1200px;
     padding: 20px;
     background-color: #f9f9f9;
     border: 1px solid #c3c3c3;
     border-radius: 5px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    /* Media query for small devices */
+    @media (max-width: 768px) {
+        max-width: 60%;
+    } 
+
+    @media (max-width: 580px) {
+        max-width: 50%;
+    }
 `;
 
 /**

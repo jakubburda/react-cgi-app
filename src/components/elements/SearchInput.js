@@ -15,21 +15,22 @@ import { CircularProgress } from '@mui/material';
  * Styled components for SearchInput
  */
 const SearchWrapper = styled(Box)`
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    border-radius: 5px;
+    width: 250px;
     margin-bottom: 10px;
 `;
 
 const SearchButton = styled(Button)`
     background-color: #1976d2;
+    height: 40px;
     color: white;
+    border-radius: 5px;
     &:hover {
         background-color: #1565c0;
     }

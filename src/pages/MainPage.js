@@ -53,7 +53,7 @@ const MainPage = () => {
       <Title />
 
       {/* Control logic to change the component */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap", justifyContent: "center", }}>
 
         <NavButton
           active={activeComponent === "random"}

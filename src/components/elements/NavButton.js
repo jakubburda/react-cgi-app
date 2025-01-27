@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
  * Styled components (using Emotion)
  */
 const StyledButton = styled.button`
+  width: 150px; 
   padding: 10px 20px;
   background-color: ${(props) => (props.active ? '#1976d2' : '#e0e0e0')};
   color: ${(props) => (props.active ? '#fff' : '#000')};

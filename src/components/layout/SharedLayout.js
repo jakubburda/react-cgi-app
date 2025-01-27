@@ -14,8 +14,17 @@ import Sidebar from './Sidebar'
  */
 const Wrapper = styled.div`
   display: flex;
-  height: 80%;
+  justify-content: center;
+  max-width: 80%;
+  max-height: 80%;
   overflow: hidden;
+  flex-shrink: 0;
+
+  /* Media query for small devices */
+  @media (max-width: 480px) {
+    max-width: 100%;
+    max-height: 100%;
+  }
 `;
 
 /**

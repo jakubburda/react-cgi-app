@@ -5,13 +5,19 @@ import styled from '@emotion/styled';
  * Styled components (using Emotion)
  */
 const AppContainerWrapper = styled.div`
+  max-width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb); 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Media query for small devices */
+  @media (max-width: 480px) {
     max-width: 100%;
-    height: 100vh;
-    background: linear-gradient(135deg, #f3f4f6, #e5e7eb); 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    max-height: 100%;
+  }
 `;
 
 /**

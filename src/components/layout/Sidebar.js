@@ -32,13 +32,22 @@ const Title = styled(Typography)`
 `;
 
 const Sidebar = styled.aside`
-  width: 250px;
+  max-width: 20%;
   background-color: #fff;
   overflow-y: scroll;
   border-radius: 10px;
   border: 1px solid #c3c3c3;
   opacity: ${(props) => (props.isSidebarActive ? 1 : 0.5)};
   pointer-events: ${(props) => (props.isSidebarActive ? 'auto' : 'none')};
+
+  /* Media query for small devices */
+  @media (max-width: 768px) {
+    max-width: 30%;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 40%;
+  }
 `;
 
 const CategoryItem = styled(Box)`

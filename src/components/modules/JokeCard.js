@@ -1,7 +1,7 @@
 // React hooks and external libraries
 import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import styled from '@emotion/styled';
 
 // Redux slices
@@ -21,21 +21,46 @@ import SearchInput from '../elements/SearchInput';
  * Styled components (using Emotion)
  */
 const JokeCardWrapper = styled(Box)`
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: auto;
-  width: 100%;
+    width: 100%;
+    height: 220px;
+    overflow-wrap: break-word;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 `;
 
 const JokeText = styled(Typography)`
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+
+    /* Media query for small devices */
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+
+    @media (max-width: 580px) {
+        font-size: 12px;
+    }
+`;
+
+const NextButton = styled.button`
+    width: 150px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-top: 20px;
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #0056b3;
+    }
 `;
 
 /**
@@ -136,7 +161,7 @@ const JokeCard = ({ mode = 'random' }) => {
     if (mode === 'category' && !selectedCategory) {
         return (
             <JokeCardWrapper>
-                <Typography variant="h6">Please select a category to fetch jokes.</Typography>
+                <Typography>Please select a category to fetch jokes.</Typography>
             </JokeCardWrapper>
         );
     }
@@ -146,7 +171,7 @@ const JokeCard = ({ mode = 'random' }) => {
         return (
             <JokeCardWrapper>
                 {result && (
-                    <JokeText variant="h6">
+                    <JokeText>
                         {result}  {/* Display the search result once it's available */}
                     </JokeText>
                 )}
@@ -158,14 +183,14 @@ const JokeCard = ({ mode = 'random' }) => {
     // Default case: Display the joke for random mode or category if category is selected
     return (
         <JokeCardWrapper>
-            <JokeText variant="h6">
+            <JokeText>
                 {mode === 'search' ? result : joke}
             </JokeText>
 
             {mode !== 'search' && (
-                <Button variant="contained" color="primary" onClick={fetchJoke}>
+                <NextButton onClick={fetchJoke}>
                     Another joke
-                </Button>
+                </NextButton>
             )}
         </JokeCardWrapper>
     );

@@ -13,6 +13,7 @@ import { CircularProgress } from "@mui/material";
 
 // Components
 import JokeCard from "../modules/JokeCard";
+import ErrorMessage from "../notifications/ErrorMessage";
 
 /**
  * Styled components for categories menu
@@ -113,9 +114,9 @@ const JokeCategoryMenu = () => {
 
   if (error) {
     return (
-      <Typography color="error" align="center">
+      <ErrorMessage message={error}>
         Error: {error}
-      </Typography>
+      </ErrorMessage>
     );
   }
 

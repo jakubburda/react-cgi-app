@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchResult, setSearchQuery, setSearchError, setSearchLoading } from '../../redux/slices/jokeSearchSlice'; 
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 import styled from '@emotion/styled';
 
 // Utility function
@@ -11,6 +11,8 @@ import { fetchJokeBySearch } from '../../utils/apiUtils';
 // Animations
 import { CircularProgress } from '@mui/material';
 
+// Components
+import ErrorMessage from '../notifications/ErrorMessage';
 
 /**
  * Styled components for SearchInput
@@ -25,6 +27,7 @@ const SearchWrapper = styled(Box)`
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 300px;
+    margin-bottom: 10px;
 `;
 
 const SearchButton = styled(Button)`
@@ -33,12 +36,6 @@ const SearchButton = styled(Button)`
     &:hover {
         background-color: #1565c0;
     }
-`;
-
-const ErrorText = styled(Typography)`
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
 `;
 
 /**
@@ -121,27 +118,31 @@ const SearchInput = () => {
     };
 
     return (
-        <SearchWrapper>
-            <ErrorText>{searchTerm === "" && 'Please enter a search string'}</ErrorText>
+        <>
+            <SearchWrapper>
+                <TextField
+                    label="Search for a Joke"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={handleChange}
+                    fullWidth
+                />
 
-            <TextField
-                label="Search for a Joke"
-                variant="outlined"
-                value={searchTerm}
-                onChange={handleChange}
-                fullWidth
-            />
+                <SearchButton
+                    onClick={handleSearch}
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    disabled={loading}
+                >
+                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
+                </SearchButton>
+            </SearchWrapper>
 
-            <SearchButton
-                onClick={handleSearch}
-                variant="contained"
-                size="large"
-                fullWidth
-                disabled={loading}
-            >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
-            </SearchButton>
-        </SearchWrapper>
+            <ErrorMessage message={"Please enter a search string"}>
+                {searchTerm === "" && 'Please enter a search string'}
+            </ErrorMessage>
+        </>
     );
 };
 

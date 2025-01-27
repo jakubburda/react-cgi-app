@@ -2,13 +2,42 @@
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCategories, setLoading, setError, setSelectedCategory } from "../../redux/slices/categorySlice";
-import { CircularProgress, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import styled from '@emotion/styled';
 
 // Utility functions
 import { fetchJokeCategories } from "../../utils/apiUtils";
 
+// Animations
+import { CircularProgress } from "@mui/material";
+
 // Components
 import JokeCard from "../modules/JokeCard";
+
+/**
+ * Styled components for categories menu
+ */
+const CategoriesContainer = styled(Box)`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const CategoryItem = styled(Box)`
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: ${(props) => (props.selected ? "#1976d2" : "#e0e0e0")};
+  color: ${(props) => (props.selected ? "#fff" : "#000")};
+  font-weight: ${(props) => (props.selected ? "bold" : "normal")};
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: ${(props) => (props.selected ? "#1565c0" : "#cfcfcf")};
+  }
+`;
 
 /**
  * JokeCategoryMenu Component
@@ -93,17 +122,17 @@ const JokeCategoryMenu = () => {
   return (
     <>
       {/* Categories menu */}
-      <div>
+      <CategoriesContainer>
         {categories.map((category) => (
-          <div
+          <CategoryItem
             key={category}
             selected={category === selectedCategory}
             onClick={() => handleCategorySelect(category)}
           >
             {category}
-          </div>
+          </CategoryItem>
         ))}
-      </div>
+      </CategoriesContainer>
 
       {/* Selected category section */}
       {selectedCategory ? (

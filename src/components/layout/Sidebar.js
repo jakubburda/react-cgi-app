@@ -6,7 +6,7 @@ import { Box, Typography } from "@mui/material";
 import styled from '@emotion/styled';
 
 // Utility functions
-import { fetchJokeCategories } from "../../utils/apiUtils";
+import { fetchJokeCategories } from "../../services/jokeService";
 
 // Animations
 import { CircularProgress } from "@mui/material";

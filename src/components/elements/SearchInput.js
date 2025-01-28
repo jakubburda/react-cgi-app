@@ -6,7 +6,7 @@ import { TextField, Button, Box } from '@mui/material';
 import styled from '@emotion/styled';
 
 // Utility function
-import { fetchJokeBySearch } from '../../utils/apiUtils';
+import { fetchJokeBySearch } from '../../services/jokeService';
 
 // Animations
 import { CircularProgress } from '@mui/material';

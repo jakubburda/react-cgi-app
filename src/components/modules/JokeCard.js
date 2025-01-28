@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { setLoading, setJoke, setError } from '../../redux/slices/jokeSlice';
 
 // Utility functions for API calls
-import { fetchJokeByRandom, fetchJokeByCategory } from '../../utils/apiUtils';
+import { fetchJokeByRandom, fetchJokeByCategory } from '../../services/jokeService';
 
 // Animations
 import { CircularProgress } from '@mui/material';
